@@ -13,9 +13,12 @@ Compiler.compile = function(config) {
         userScript += "// @name\t\t\t" + config.name + "\n";
     }
 
-    if (config.namespace) {
-        userScript += "// @namespace\t\t" + config.namespace + "\n";
-    }
+    var options = ['id', 'category', 'namespace'];
+    options.forEach((key) => {
+        if (key in config) {
+            userScript += `// @${key}\t\t${config[key]}\n`;
+        }
+    });
 
     if (config.version) {
         userScript += "// @version\t\t\t" + config.version + "\n";
