@@ -76,6 +76,24 @@ describe('Compiler', function () {
                 }
             }
         });
+        it('Should support match array', function () {
+            let config = {
+                "match": [
+                    "https://*.example.com/abc*",
+                    "http://*.example.com/abc*"
+                ]
+            };
+            let compiler = new Compiler(config);
+            let result = "";
+            result = compiler.compile();
+            for (const key in config) {
+                if (config.hasOwnProperty(key)) {
+                    const element = config[key];
+                    assert.isTrue(result.indexOf("@" + key)>=0, `result must contain @${key}\n\n` + result);    
+                }
+            }
+            //assert.isTrue(false, `todo\n` + result);
+        });
     });
 
 });

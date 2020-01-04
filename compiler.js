@@ -36,15 +36,16 @@ class Compiler {
      * Get whole header for a user.script.js.
      */
     compile () {
+        var me = this;
         var config = this.config;
         var userScript = "// ==UserScript==\n";
 
         if (config.author) {
-            userScript += this.geConfigLine("author", config.author);
+            userScript += me.geConfigLine("author", config.author);
         }
         
         if (config.name) {
-            userScript += this.geConfigLine("name", config.name);
+            userScript += me.geConfigLine("name", config.name);
         }
 
         var options = ['id', 'category', 'namespace'];
@@ -55,47 +56,47 @@ class Compiler {
         });
 
         if (config.version) {
-            userScript += this.geConfigLine("version", config.version);
+            userScript += me.geConfigLine("version", config.version);
         }
 
         if (config.description) {
-            userScript += this.geConfigLine("description", config.description);
+            userScript += me.geConfigLine("description", config.description);
         }
 
         if (config.homepage) {
-            userScript += this.geConfigLine("homepage", config.homepage);
+            userScript += me.geConfigLine("homepage", config.homepage);
         }
 
         if (config.homepageUrl) {
-            userScript += this.geConfigLine("homepageURL", config.homepageUrl);
+            userScript += me.geConfigLine("homepageURL", config.homepageUrl);
         }
 
         if (config.website) {
-            userScript += this.geConfigLine("website", config.website);
+            userScript += me.geConfigLine("website", config.website);
         }
 
         if (config.source) {
-            userScript += this.geConfigLine("source", config.source);
+            userScript += me.geConfigLine("source", config.source);
         }
 
         if (config.icon) {
-            userScript += this.geConfigLine("icon", config.icon);
+            userScript += me.geConfigLine("icon", config.icon);
         }
 
         if (config.iconUrl) {
-            userScript += this.geConfigLine("iconURL", config.iconUrl);
+            userScript += me.geConfigLine("iconURL", config.iconUrl);
         }
 
         if (config.defaultIcon) {
-            userScript += this.geConfigLine("defaulticon", config.defaultIcon);
+            userScript += me.geConfigLine("defaulticon", config.defaultIcon);
         }
 
         if (config.icon64) {
-            userScript += this.geConfigLine("icon64", config.icon64);
+            userScript += me.geConfigLine("icon64", config.icon64);
         }
 
         if (config.icon64Url) {
-            userScript += this.geConfigLine("icon64URL", config.icon64Url);
+            userScript += me.geConfigLine("icon64URL", config.icon64Url);
         }
 
         if (config.updateUrl) {
@@ -103,15 +104,15 @@ class Compiler {
                 console.warn("MonkeyScript: WARNING: version was not present but it is required for updateUrl to work.");
             }
 
-            userScript += this.geConfigLine("updateURL", config.updateUrl);
+            userScript += me.geConfigLine("updateURL", config.updateUrl);
         }
         
         if (config.downloadUrl) {
-            userScript += this.geConfigLine("downloadURL", config.downloadUrl);
+            userScript += me.geConfigLine("downloadURL", config.downloadUrl);
         }
         
         if (config.supportUrl) {
-            userScript += this.geConfigLine("supportURL", config.supportUrl);
+            userScript += me.geConfigLine("supportURL", config.supportUrl);
         }
         
         if (config.include) {
@@ -137,7 +138,7 @@ class Compiler {
                     }
                 }
 
-                userScript += this.geConfigLine("include", includeItem);
+                userScript += me.geConfigLine("include", includeItem);
             });
         }
 
@@ -148,7 +149,7 @@ class Compiler {
             }
 
             config.match.forEach(function(matchItem) {
-                userScript += this.geConfigLine("match", matchItem);
+                userScript += me.geConfigLine("match", matchItem);
             });
         }
 
@@ -159,7 +160,7 @@ class Compiler {
             }
 
             config.exclude.forEach(function(excludeItem) {
-                userScript += this.geConfigLine("exclude", excludeItem);
+                userScript += me.geConfigLine("exclude", excludeItem);
             });
         }
 
@@ -174,7 +175,7 @@ class Compiler {
             }
 
             config.require.forEach(function(requireItem) {
-                userScript += this.geConfigLine("require", requireItem);
+                userScript += me.geConfigLine("require", requireItem);
             });
         }
 
@@ -193,7 +194,7 @@ class Compiler {
                 var key = Object.keys(resourceItem)[0];
                 var value = resourceItem[key];
                 
-                userScript += this.geConfigLine("resource", key + " " + value);
+                userScript += me.geConfigLine("resource", key + " " + value);
             });
         }
 
@@ -204,7 +205,7 @@ class Compiler {
             }
 
             config.connect.forEach(function(connectItem) {
-                userScript += this.geConfigLine("connect", connectItem);
+                userScript += me.geConfigLine("connect", connectItem);
             });
         }
 
@@ -215,12 +216,12 @@ class Compiler {
             }
 
             config.domain.forEach(function(domainItem) {
-                userScript += this.geConfigLine("domain", domainItem);
+                userScript += me.geConfigLine("domain", domainItem);
             });
         }
 
         if (config.runAt) {
-            userScript += this.geConfigLine("run-at", config.runAt);
+            userScript += me.geConfigLine("run-at", config.runAt);
         }
 
         if (config.grant) {
@@ -230,7 +231,7 @@ class Compiler {
             }
 
             config.grant.forEach(function(grantItem) {
-                userScript += this.geConfigLine("grant", grantItem);
+                userScript += me.geConfigLine("grant", grantItem);
             });
         }
 
@@ -243,11 +244,11 @@ class Compiler {
         }
 
         if (config.noCompat) {
-            userScript += this.geConfigLine("nocompat", config.noCompat);
+            userScript += me.geConfigLine("nocompat", config.noCompat);
         }
 
         if (config.copyright) {
-            userScript += this.geConfigLine("copyright", config.copyright);
+            userScript += me.geConfigLine("copyright", config.copyright);
         }
 
         userScript += "// ==/UserScript==\n";
