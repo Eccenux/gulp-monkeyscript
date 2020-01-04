@@ -2,7 +2,7 @@
 var fs = require('fs');
 var Stream = require('readable-stream');
 var StreamQueue = require('streamqueue');
-var compiler = require('./compiler');
+var Compiler = require('./compiler');
 
 function MonkeyScript(config) {
     this.createProject(config);
@@ -18,7 +18,8 @@ MonkeyScript.createProject = function(input) {
         process.exit();
     }
 
-    var userScript = compiler.compile(config);
+    var compiler = new Compiler(config);
+    var userScript = compiler.compile();
 
     return () => {
         var stream = new Stream.Transform({objectMode: true});
