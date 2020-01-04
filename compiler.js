@@ -51,7 +51,7 @@ class Compiler {
         var options = ['id', 'category', 'namespace'];
         options.forEach((key) => {
             if (key in config) {
-                userScript += `// @${key}\t\t${config[key]}\n`;
+                userScript += me.geConfigLine(key, config[key]);
             }
         });
 
