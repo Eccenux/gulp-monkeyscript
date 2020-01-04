@@ -28,4 +28,23 @@ describe('Compiler', function () {
 			assert.equal(result, 5);
 		});
     });
+
+    // geConfigLine function
+    describe('geConfigLine', function () {
+        it('Should start with key', function () {
+            let compiler = new Compiler({abc:123});
+            let result = "";
+            result = compiler.geConfigLine('abc', 123);
+			assert.isTrue(result.startsWith('// @abc'));
+		});
+        it('Should be aligned with spaces', function () {
+            let compiler = new Compiler({abc:123, abcdef:234}, 0);
+            assert.equal(compiler.keysLength, 6);
+            let result = "";
+            result = compiler.geConfigLine('abcdef', 234);
+			assert.equal(result, '// @abcdef 234\n');
+            result = compiler.geConfigLine('abc', 123);
+			assert.equal(result, '// @abc    123\n');
+		});
+    });
 });

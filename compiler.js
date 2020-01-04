@@ -1,11 +1,18 @@
 "use-strict";
 
 class Compiler {
-    constructor(config) {
+    constructor(config, basePad) {
         this.config = config;
-        this.keysLength = this.getKeysLength(config, 10);
+        let base = typeof basePad === 'number' ? basePad : 10;
+        this.keysLength = this.getKeysLength(config, base);
     }
 
+    /**
+     * Get top length of keys.
+     * @param {Object} object Object.
+     * @param {Number} base Base (min) length.
+     * @returns {Number} max length or base.
+     */
     getKeysLength(object, base) {
         var length = base ? base : 0;
         Object.keys(object).forEach((value)=>{
@@ -16,6 +23,18 @@ class Compiler {
         return length;
     }
 
+    /**
+     * Get monkey script config line.
+     * @param {String} key Name of the key.
+     * @param {String} value Name of the value.
+     */
+    geConfigLine(key, value) {
+        return "// @"+key.padEnd(this.keysLength)+" " + value + "\n";
+    }
+
+    /**
+     * Get whole header for a user.script.js.
+     */
     compile () {
         var config = this.config;
         var userScript = "// ==UserScript==\n";
