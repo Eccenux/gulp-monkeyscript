@@ -1,6 +1,9 @@
 const assert = require('chai').assert;
+const fs = require('fs');
 
-var Compiler = require('../compiler');
+const Compiler = require('../compiler');
+
+const monkeySchema = require("../schema.json")
 
 describe('Compiler', function () {
     
@@ -47,4 +50,32 @@ describe('Compiler', function () {
 			assert.equal(result, '// @abc    123\n');
 		});
     });
+
+    // compiler function
+    describe('compiler', function () {
+        it('Should support all string values from schema', function () {
+            // create config from schema
+            let config = {};
+            for (const key in monkeySchema.properties) {
+                if (monkeySchema.properties.hasOwnProperty(key)) {
+                    const element = monkeySchema.properties[key];
+                    if (element.type === 'string') {
+                        // Note! The `element.title` seem to be the actual value used for monkeyscript.
+                        // E.g. for key `homepageUrl` actual key in user.script is `@homepageURL`.
+                        config[key] = element.title.replace(/@/, ''); 
+                    }    
+                }
+            }
+            let compiler = new Compiler(config);
+            let result = "";
+            result = compiler.compile();
+            for (const key in config) {
+                if (config.hasOwnProperty(key)) {
+                    const element = config[key];
+                    assert.isTrue(result.indexOf("@" + element)>=0, `result must contain @${element}\n\n` + result);    
+                }
+            }
+        });
+    });
+
 });

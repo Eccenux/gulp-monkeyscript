@@ -40,11 +40,11 @@ class Compiler {
         var userScript = "// ==UserScript==\n";
 
         if (config.author) {
-            userScript += "// @author\t\t\t" + config.author + "\n";
+            userScript += this.geConfigLine("author", config.author);
         }
         
         if (config.name) {
-            userScript += "// @name\t\t\t" + config.name + "\n";
+            userScript += this.geConfigLine("name", config.name);
         }
 
         var options = ['id', 'category', 'namespace'];
@@ -55,47 +55,47 @@ class Compiler {
         });
 
         if (config.version) {
-            userScript += "// @version\t\t\t" + config.version + "\n";
+            userScript += this.geConfigLine("version", config.version);
         }
 
         if (config.description) {
-            userScript += "// @description\t\t" + config.description + "\n";
+            userScript += this.geConfigLine("description", config.description);
         }
 
         if (config.homepage) {
-            userScript += "// @homepage\t\t" + config.homepage + "\n";
+            userScript += this.geConfigLine("homepage", config.homepage);
         }
 
         if (config.homepageUrl) {
-            userScript += "// @homepageURL\t\t" + config.homepageUrl + "\n";
+            userScript += this.geConfigLine("homepageURL", config.homepageUrl);
         }
 
         if (config.website) {
-            userScript += "// @website\t\t\t" + config.website + "\n";
+            userScript += this.geConfigLine("website", config.website);
         }
 
         if (config.source) {
-            userScript += "// @source\t\t\t" + config.source + "\n";
+            userScript += this.geConfigLine("source", config.source);
         }
 
         if (config.icon) {
-            userScript += "// @icon\t\t\t" + config.icon + "\n";
+            userScript += this.geConfigLine("icon", config.icon);
         }
 
         if (config.iconUrl) {
-            userScript += "// @iconURL\t\t\t" + config.iconUrl + "\n";
+            userScript += this.geConfigLine("iconURL", config.iconUrl);
         }
 
         if (config.defaultIcon) {
-            userScript += "// @defaulticon\t\t" + config.defaultIcon + "\n";
+            userScript += this.geConfigLine("defaulticon", config.defaultIcon);
         }
 
         if (config.icon64) {
-            userScript += "// @icon64\t\t\t" + config.icon64 + "\n";
+            userScript += this.geConfigLine("icon64", config.icon64);
         }
 
         if (config.icon64Url) {
-            userScript += "// @icon64URL\t\t" + config.icon64Url + "\n";
+            userScript += this.geConfigLine("icon64URL", config.icon64Url);
         }
 
         if (config.updateUrl) {
@@ -103,15 +103,15 @@ class Compiler {
                 console.warn("MonkeyScript: WARNING: version was not present but it is required for updateUrl to work.");
             }
 
-            userScript += "// @updateURL\t\t" + config.updateUrl + "\n";
+            userScript += this.geConfigLine("updateURL", config.updateUrl);
         }
         
         if (config.downloadUrl) {
-            userScript += "// @downloadURL\t\t" + config.downloadUrl + "\n";
+            userScript += this.geConfigLine("downloadURL", config.downloadUrl);
         }
         
         if (config.supportUrl) {
-            userScript += "// @supportURL\t\t" + config.supportUrl + "\n";
+            userScript += this.geConfigLine("supportURL", config.supportUrl);
         }
         
         if (config.include) {
@@ -137,7 +137,7 @@ class Compiler {
                     }
                 }
 
-                userScript += "// @include\t\t\t" + includeItem + "\n";
+                userScript += this.geConfigLine("include", includeItem);
             });
         }
 
@@ -148,7 +148,7 @@ class Compiler {
             }
 
             config.match.forEach(function(matchItem) {
-                userScript += "// @match\t\t\t" + matchItem + "\n";
+                userScript += this.geConfigLine("match", matchItem);
             });
         }
 
@@ -159,7 +159,7 @@ class Compiler {
             }
 
             config.exclude.forEach(function(excludeItem) {
-                userScript += "// @exclude\t\t\t" + excludeItem + "\n";
+                userScript += this.geConfigLine("exclude", excludeItem);
             });
         }
 
@@ -174,7 +174,7 @@ class Compiler {
             }
 
             config.require.forEach(function(requireItem) {
-                userScript += "// @require\t\t\t" + requireItem + "\n";
+                userScript += this.geConfigLine("require", requireItem);
             });
         }
 
@@ -193,7 +193,7 @@ class Compiler {
                 var key = Object.keys(resourceItem)[0];
                 var value = resourceItem[key];
                 
-                userScript += "// @resource\t\t" + key + " " + value + "\n";
+                userScript += this.geConfigLine("resource", key + " " + value);
             });
         }
 
@@ -204,7 +204,7 @@ class Compiler {
             }
 
             config.connect.forEach(function(connectItem) {
-                userScript += "// @connect\t\t\t" + connectItem + "\n";
+                userScript += this.geConfigLine("connect", connectItem);
             });
         }
 
@@ -215,12 +215,12 @@ class Compiler {
             }
 
             config.domain.forEach(function(domainItem) {
-                userScript += "// @domain\t\t\t" + domainItem + "\n";
+                userScript += this.geConfigLine("domain", domainItem);
             });
         }
 
         if (config.runAt) {
-            userScript += "// @run-at\t\t\t" + config.runAt + "\n";
+            userScript += this.geConfigLine("run-at", config.runAt);
         }
 
         if (config.grant) {
@@ -230,7 +230,7 @@ class Compiler {
             }
 
             config.grant.forEach(function(grantItem) {
-                userScript += "// @grant\t\t\t" + grantItem + "\n";
+                userScript += this.geConfigLine("grant", grantItem);
             });
         }
 
@@ -243,11 +243,11 @@ class Compiler {
         }
 
         if (config.noCompat) {
-            userScript += "// @nocompat\t\t" + config.noCompat + "\n";
+            userScript += this.geConfigLine("nocompat", config.noCompat);
         }
 
         if (config.copyright) {
-            userScript += "// @copyright\t\t" + config.copyright + "\n";
+            userScript += this.geConfigLine("copyright", config.copyright);
         }
 
         userScript += "// ==/UserScript==\n";
