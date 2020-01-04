@@ -5,6 +5,10 @@ function Compiler(config) {}
 Compiler.compile = function(config) {
     var userScript = "// ==UserScript==\n";
 
+    if (config.author) {
+        userScript += "// @author\t\t\t" + config.author + "\n";
+    }
+	
     if (config.name) {
         userScript += "// @name\t\t\t" + config.name + "\n";
     }
@@ -15,10 +19,6 @@ Compiler.compile = function(config) {
 
     if (config.version) {
         userScript += "// @version\t\t\t" + config.version + "\n";
-    }
-
-    if (config.author) {
-        userScript += "// @author\t\t\t" + config.author + "\n";
     }
 
     if (config.description) {
