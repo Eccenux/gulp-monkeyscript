@@ -33,6 +33,24 @@ class Compiler {
     }
 
     /**
+     * Append options array config.
+     * @param {Array} options 
+     */
+    appendOptions(options) {
+        let userScript = "";
+        const config = this.config;
+        options.forEach((element) => {
+            if (typeof element === "string") {
+                element = {key:element, label:element};
+            }
+            if (element.key in config) {
+                userScript += this.geConfigLine(element.label, config[element.key]);
+            }
+        });
+        return userScript;
+    }
+
+    /**
      * Get whole header for a user.script.js.
      */
     compile () {
@@ -40,65 +58,26 @@ class Compiler {
         var config = this.config;
         var userScript = "// ==UserScript==\n";
 
-        if (config.author) {
-            userScript += me.geConfigLine("author", config.author);
-        }
-        
-        if (config.name) {
-            userScript += me.geConfigLine("name", config.name);
-        }
-
-        var options = ['id', 'category', 'namespace'];
-        options.forEach((key) => {
-            if (key in config) {
-                userScript += me.geConfigLine(key, config[key]);
-            }
-        });
-
-        if (config.version) {
-            userScript += me.geConfigLine("version", config.version);
-        }
-
-        if (config.description) {
-            userScript += me.geConfigLine("description", config.description);
-        }
-
-        if (config.homepage) {
-            userScript += me.geConfigLine("homepage", config.homepage);
-        }
-
-        if (config.homepageUrl) {
-            userScript += me.geConfigLine("homepageURL", config.homepageUrl);
-        }
-
-        if (config.website) {
-            userScript += me.geConfigLine("website", config.website);
-        }
-
-        if (config.source) {
-            userScript += me.geConfigLine("source", config.source);
-        }
-
-        if (config.icon) {
-            userScript += me.geConfigLine("icon", config.icon);
-        }
-
-        if (config.iconUrl) {
-            userScript += me.geConfigLine("iconURL", config.iconUrl);
-        }
-
-        if (config.defaultIcon) {
-            userScript += me.geConfigLine("defaulticon", config.defaultIcon);
-        }
-
-        if (config.icon64) {
-            userScript += me.geConfigLine("icon64", config.icon64);
-        }
-
-        if (config.icon64Url) {
-            userScript += me.geConfigLine("icon64URL", config.icon64Url);
-        }
-
+        var options = [
+            'author',
+            'name',
+            'id',
+            'category',
+            'namespace',
+            "version",
+            "description",
+            "homepage",
+            {"label":"homepageURL","key":"homepageUrl"},
+            "website",
+            "source",
+            "icon",
+            {"label":"iconURL","key":"iconUrl"},
+            {"label":"defaulticon","key":"defaultIcon"},
+            "icon64",
+            {"label":"icon64URL","key":"icon64Url"},
+        ];
+        userScript += this.appendOptions(options);
+ 
         if (config.updateUrl) {
             if (!config.version) {
                 console.warn("MonkeyScript: WARNING: version was not present but it is required for updateUrl to work.");
