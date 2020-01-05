@@ -66,8 +66,10 @@ class Compiler {
             'namespace',
             "version",
             "description",
+            "copyright",
             "homepage",
             {"label":"homepageURL","key":"homepageUrl"},
+            {"label":"supportURL","key":"supportUrl"},
             "website",
             "source",
             "icon",
@@ -75,6 +77,8 @@ class Compiler {
             {"label":"defaulticon","key":"defaultIcon"},
             "icon64",
             {"label":"icon64URL","key":"icon64Url"},
+            {"label":"nocompat","key":"noCompat"},
+            {"label":"run-at","key":"runAt"},
         ];
         userScript += this.appendOptions(options);
  
@@ -90,31 +94,15 @@ class Compiler {
             userScript += me.geConfigLine("downloadURL", config.downloadUrl);
         }
         
-        if (config.supportUrl) {
-            userScript += me.geConfigLine("supportURL", config.supportUrl);
-        }
-        
         if (config.include) {
             if (typeof config.include === "string") {
                 console.error("MonkeyScript: Include expected an array, but got string.");
             }
-
-            var hasStringIncludesSupport = typeof String.prototype.includes !== 'undefined'
             
             config.include.forEach(function(includeItem) {
-                var logError = function() {
+                if (includeItem.indexOf("#") > -1) {
                     console.error("MonkeyScript: Include contains a URL with a hash parameter which is not supported.");
                     process.exit();
-                };
-
-                if (hasStringIncludesSupport) {
-                    if (includeItem.includes("#")) {
-                        logError();
-                    }
-                } else {
-                    if (includeItem.indexOf("#") > -1) {
-                        logError();
-                    }
                 }
 
                 userScript += me.geConfigLine("include", includeItem);
@@ -199,10 +187,6 @@ class Compiler {
             });
         }
 
-        if (config.runAt) {
-            userScript += me.geConfigLine("run-at", config.runAt);
-        }
-
         if (config.grant) {
             if (typeof config.grant === "string") {
                 console.error("MonkeyScript: Grant expected an array, but got string.");
@@ -220,14 +204,6 @@ class Compiler {
 
         if (config.unwrap) {
             userScript += "// @unwrap\n";
-        }
-
-        if (config.noCompat) {
-            userScript += me.geConfigLine("nocompat", config.noCompat);
-        }
-
-        if (config.copyright) {
-            userScript += me.geConfigLine("copyright", config.copyright);
         }
 
         userScript += "// ==/UserScript==\n";
