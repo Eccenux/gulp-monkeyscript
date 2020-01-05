@@ -1,5 +1,7 @@
+/* eslint-disable no-prototype-builtins */
+/* global it, describe */
 const assert = require('chai').assert;
-const fs = require('fs');
+//const fs = require('fs');
 
 const Compiler = require('../compiler');
 
@@ -72,9 +74,10 @@ describe('Compiler', function () {
             for (const key in config) {
                 if (config.hasOwnProperty(key)) {
                     const element = config[key];
-                    assert.isTrue(result.indexOf("@" + element)>=0, `result must contain @${element}\n\n` + result);    
+                    assert.isTrue(result.indexOf("@" + element + " ")>=0, `result must contain @${element}\n\n` + result);    
                 }
             }
+            //assert.isTrue(false, `todo\n` + result);
         });
         it('Should support match array', function () {
             let config = {
@@ -88,7 +91,7 @@ describe('Compiler', function () {
             result = compiler.compile();
             for (const key in config) {
                 if (config.hasOwnProperty(key)) {
-                    const element = config[key];
+                    //const element = config[key];
                     assert.isTrue(result.indexOf("@" + key)>=0, `result must contain @${key}\n\n` + result);    
                 }
             }
