@@ -4,6 +4,7 @@
 $ npm install gulp-monkeyscript --save-dev
 ```
 
+See [DEVELOPMENT.md](DEVELOPMENT.md) for details on customizing gulp-monkeyscript.
 
 ## Usage
 
@@ -67,4 +68,4 @@ Becomes:
 
 ## License
 
-MIT © 2017 Tom O'Neill
+MIT © 2017-2020 Tom O'Neill, Maciej Nux Jaros
