@@ -34,21 +34,21 @@ describe('Compiler', function () {
         });
     });
 
-    // geConfigLine function
-    describe('geConfigLine', function () {
+    // getMetaLine function
+    describe('getMetaLine', function () {
         it('Should start with key', function () {
             let compiler = new Compiler({abc:123});
             let result = "";
-            result = compiler.geConfigLine('abc', 123);
+            result = compiler.getMetaLine('abc', 123);
             assert.isTrue(result.startsWith('// @abc'));
         });
         it('Should be aligned with spaces', function () {
             let compiler = new Compiler({abc:123, abcdef:234}, 0);
             assert.equal(compiler.keysLength, 6);
             let result = "";
-            result = compiler.geConfigLine('abcdef', 234);
+            result = compiler.getMetaLine('abcdef', 234);
             assert.equal(result, '// @abcdef 234\n');
-            result = compiler.geConfigLine('abc', 123);
+            result = compiler.getMetaLine('abc', 123);
             assert.equal(result, '// @abc    123\n');
         });
     });
@@ -157,6 +157,21 @@ describe('Compiler', function () {
                 });
             }
             //assert.isTrue(false, `todo\n` + result);
+        });
+        it('Should prepend CSS as variable', function () {
+            let config = {
+                "author": "Johnny be Good",
+                "version": "1.2.3",
+                "monkeyscript": {
+                    "prependCSS": "test.css",
+                    "meta": {}
+                }
+            };
+            let compiler = new Compiler(config);
+            let result = "";
+            result = compiler.compile();
+            assert.isTrue(result.indexOf("#just-for-tests")>=0, `result must contain #just-for-tests selector from CSS\n\n` + result);
+            assert.isTrue(false, `todo\n` + result);
         });
     });
 

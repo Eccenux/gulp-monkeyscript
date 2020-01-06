@@ -10,6 +10,23 @@ class Compiler {
     }
 
     /**
+     * Main compilation.
+     * 
+     * Creates whole header for a user.script.js.
+     */
+    compile () {
+        var userScript = "// ==UserScript==\n";
+        userScript += this.generateMeta();
+        userScript += "// ==/UserScript==\n";
+
+        if (this.config.useStrict || this.rawConfig.useStrict) {
+            userScript += "'use strict';\n";
+        }
+        
+        return userScript += "\n";
+    }
+
+    /**
      * Get type of configuration.
      * @param {Object} rawConfig Object.
      * @returns {String} "simple" when only meta object was passed; "package" when package.json or monkeyscript with options was passed.
@@ -75,21 +92,21 @@ class Compiler {
     }
 
     /**
-     * Get monkey script config line.
+     * Get monkey script meta data line.
      * @param {String} key Name of the key.
      * @param {String} value Name of the value.
 	 * @private
      */
-    geConfigLine(key, value) {
+    getMetaLine(key, value) {
         return "// @"+key.padEnd(this.keysLength)+" " + value + "\n";
     }
 
     /**
-     * Append options array config.
+     * Generate meta data from options array and config.
      * @param {Array} options 
 	 * @private
      */
-    appendOptions(options) {
+    generateMetaOptions(options) {
         let userScript = "";
         const config = this.config;
         options.forEach((element) => {
@@ -97,19 +114,20 @@ class Compiler {
                 element = {key:element, label:element};
             }
             if (element.key in config) {
-                userScript += this.geConfigLine(element.label, config[element.key]);
+                userScript += this.getMetaLine(element.label, config[element.key]);
             }
         });
         return userScript;
     }
 
     /**
-     * Get whole header for a user.script.js.
+     * Generate all meta data (and configuration) lines for a user.script.js.
+	 * @private
      */
-    compile () {
+    generateMeta () {
         var me = this;
         var config = this.config;
-        var userScript = "// ==UserScript==\n";
+        var userScript = "";
 
         var options = [
             'author',
@@ -133,18 +151,18 @@ class Compiler {
             {"label":"nocompat","key":"noCompat"},
             {"label":"run-at","key":"runAt"},
         ];
-        userScript += this.appendOptions(options);
+        userScript += this.generateMetaOptions(options);
  
         if (config.updateUrl) {
             if (!config.version) {
                 console.warn("MonkeyScript: WARNING: version was not present but it is required for updateUrl to work.");
             }
 
-            userScript += me.geConfigLine("updateURL", config.updateUrl);
+            userScript += me.getMetaLine("updateURL", config.updateUrl);
         }
         
         if (config.downloadUrl) {
-            userScript += me.geConfigLine("downloadURL", config.downloadUrl);
+            userScript += me.getMetaLine("downloadURL", config.downloadUrl);
         }
         
         if (config.include) {
@@ -158,7 +176,7 @@ class Compiler {
                     process.exit();
                 }
 
-                userScript += me.geConfigLine("include", includeItem);
+                userScript += me.getMetaLine("include", includeItem);
             });
         }
 
@@ -169,7 +187,7 @@ class Compiler {
             }
 
             config.match.forEach(function(matchItem) {
-                userScript += me.geConfigLine("match", matchItem);
+                userScript += me.getMetaLine("match", matchItem);
             });
         }
 
@@ -180,7 +198,7 @@ class Compiler {
             }
 
             config.exclude.forEach(function(excludeItem) {
-                userScript += me.geConfigLine("exclude", excludeItem);
+                userScript += me.getMetaLine("exclude", excludeItem);
             });
         }
 
@@ -195,7 +213,7 @@ class Compiler {
             }
 
             config.require.forEach(function(requireItem) {
-                userScript += me.geConfigLine("require", requireItem);
+                userScript += me.getMetaLine("require", requireItem);
             });
         }
 
@@ -214,7 +232,7 @@ class Compiler {
                 var key = Object.keys(resourceItem)[0];
                 var value = resourceItem[key];
                 
-                userScript += me.geConfigLine("resource", key + " " + value);
+                userScript += me.getMetaLine("resource", key + " " + value);
             });
         }
 
@@ -225,7 +243,7 @@ class Compiler {
             }
 
             config.connect.forEach(function(connectItem) {
-                userScript += me.geConfigLine("connect", connectItem);
+                userScript += me.getMetaLine("connect", connectItem);
             });
         }
 
@@ -236,7 +254,7 @@ class Compiler {
             }
 
             config.domain.forEach(function(domainItem) {
-                userScript += me.geConfigLine("domain", domainItem);
+                userScript += me.getMetaLine("domain", domainItem);
             });
         }
 
@@ -247,7 +265,7 @@ class Compiler {
             }
 
             config.grant.forEach(function(grantItem) {
-                userScript += me.geConfigLine("grant", grantItem);
+                userScript += me.getMetaLine("grant", grantItem);
             });
         }
 
@@ -259,13 +277,7 @@ class Compiler {
             userScript += "// @unwrap\n";
         }
 
-        userScript += "// ==/UserScript==\n";
-
-        if (config.useStrict) {
-            userScript += "'use strict';\n";
-        }
-        
-        return userScript += "\n";
+        return userScript;
     }
 }
 
