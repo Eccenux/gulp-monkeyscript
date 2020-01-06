@@ -9,7 +9,10 @@ function MonkeyScript(config) {
 }
 
 MonkeyScript.createProject = function(input) {
-    throwIfInvalid(input);
+    if (!input) {
+        console.error("MonkeyScript: Could not create a new project: No configuration was given.");
+        process.exit();
+    }
 
     // read from file
     var config = getConfiguration(input);
@@ -68,13 +71,6 @@ MonkeyScript.createProject = function(input) {
         return stream;
     }
 };
-
-function throwIfInvalid(input) {
-    if (!input) {
-        console.error("MonkeyScript: Could not create a new project: No configuration was given.");
-        process.exit();
-    }
-}
 
 function getConfiguration(input) {
     if (typeof input === "string") {
