@@ -1,17 +1,68 @@
 "use-strict";
 
 class Compiler {
-    constructor(config, basePad) {
-        this.config = config;
+    constructor(rawConfig, basePad) {
+        let type = this.getConfigType(rawConfig);
+        let config = this.preProcess(rawConfig, type);
         let base = typeof basePad === 'number' ? basePad : 10;
         this.keysLength = this.getKeysLength(config, base);
+        this.rawConfig = rawConfig;
     }
 
+    /**
+     * Get type of configuration.
+     * @param {Object} rawConfig Object.
+     * @returns {String} "simple" when only meta object was passed; "package" when package.json or monkeyscript with options was passed.
+	 * @private
+     */
+    getConfigType(rawConfig) {
+        if ("monkeyscript" in rawConfig) {
+            return "package";
+        }
+        return "simple";
+    }
+
+    /**
+     * Get type of configuration.
+     * @param {Object} object Object.
+     * @returns {Number} max length or base.
+	 * @private
+     */
+    preProcess(rawConfig, type) {
+        let rawConfigClone = JSON.parse(JSON.stringify(rawConfig));
+        // only meta, so not much to do
+        if (type === "simple") {
+            this.config = rawConfigClone;
+            return rawConfigClone;
+        }
+
+        // start with meta
+        let config = {};
+        if (rawConfigClone.monkeyscript && rawConfigClone.monkeyscript.meta) {
+            config = rawConfigClone.monkeyscript.meta;
+        }
+        // extract data from package.json
+        let keys = [
+            'author',
+            'name',
+            "version",
+            "description",
+        ];
+        keys.forEach(key => {
+            if (!(key in config) && (key in rawConfigClone)) {
+                config[key] = rawConfigClone[key];
+            }
+        });
+        this.config = config;
+        return config;
+    }
+    
     /**
      * Get top length of keys.
      * @param {Object} object Object.
      * @param {Number} base Base (min) length.
      * @returns {Number} max length or base.
+	 * @private
      */
     getKeysLength(object, base) {
         var length = base ? base : 0;
@@ -27,6 +78,7 @@ class Compiler {
      * Get monkey script config line.
      * @param {String} key Name of the key.
      * @param {String} value Name of the value.
+	 * @private
      */
     geConfigLine(key, value) {
         return "// @"+key.padEnd(this.keysLength)+" " + value + "\n";
@@ -35,6 +87,7 @@ class Compiler {
     /**
      * Append options array config.
      * @param {Array} options 
+	 * @private
      */
     appendOptions(options) {
         let userScript = "";

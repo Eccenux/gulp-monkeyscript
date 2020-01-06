@@ -8,7 +8,9 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for details on customizing gulp-monkeyscrip
 
 ## Usage
 
-Add `monkeyscript.json` to the root of your project and add the following line to get Intellisense working:
+Either use `package.json` directly or use separate `monkeyscript.json`.
+
+If you use `monkeyscript.json` you can and add the following line in it to get Intellisense working:
 ```
 "$schema": "./node_modules/gulp-monkeyscript/schema.json",
 ```
@@ -28,6 +30,7 @@ gulp.src("src/**/*.js")
 ```
 
 ## Showcase
+This `monkeyscript.json`:
 ```json
 {
     "$schema": "./node_modules/gulp-monkeyscript/schema.json",
@@ -48,23 +51,65 @@ Becomes:
 
 ```js
 // ==UserScript==
-// @name		My Awesome Userscript!
-// @version		1.0.0
-// @author		Tom
-// @description		This userscript adds new functionality!
-// @match		http://www.website.com/page1/
-// @match		http://www.website-alter.com/*
-// @run-at		document-start
+// @name        My Awesome Userscript!
+// @version     1.0.0
+// @author      Tom
+// @description This userscript adds new functionality!
+// @match       http://www.website.com/page1/
+// @match       http://www.website-alter.com/*
+// @run-at      document-start
 // ==/UserScript==
 'use strict';
 
 <other source>
 ```
 
+Where `<other source>` is whatever things you contacted or built with gulp.
+
+## Using package.json
+
+Basic `package.json` can be generate with a standard Node command:
+```
+npm init
+``` 
+
+By using `package.json` you will not have to repeat author, name, version and description twice.
+
+You will just add user-script specific information in a separate property called `"monkeyscript"`.
+
+So a minimum `package.json` would be created by adding some `match` array for user-script *meta* like so:
+```json
+{
+    "author": "Tom",
+    "name": "My Awesome Userscript!",
+    "version": "1.0.0",
+    "description": "This userscript adds new functionality!",
+	"monkeyscript": {
+	    "meta": {
+		    "match": [
+		        "http://www.expample.com/page1/*"
+		    ]
+		}
+	}
+}
+```
+
+`gulpfile.js`:
+
+```js
+const ms = require('gulp-monkeyscript');
+const msProject = ms.createProject("package.json");
+
+gulp.src("src/**/*.js")				// get all js from `src` folder 
+	.pipe(concat("script.user.js"))	// concat js to a single file
+    .pipe(msProject())				// append Grease/Tampermonkey header to that file
+	.pipe(gulp.dest("dist/"));		// put the file in `dist` folder
+
+```
+
 ## Dependencies
 - <a href="https://www.npmjs.com/package/readable-stream">readable-stream</a>
 - <a href="https://www.npmjs.com/package/streamqueue">streamqueue</a>
-
 
 ## License
 

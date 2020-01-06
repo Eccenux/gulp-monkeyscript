@@ -11,11 +11,19 @@ function MonkeyScript(config) {
 MonkeyScript.createProject = function(input) {
     throwIfInvalid(input);
 
+    // read from file
     var config = getConfiguration(input);
     
-    if (!config) {
-        console.error("MonkeyScript: Could not create a new project: The provided configuration was neither a string nor an object.");
+    if (!config || typeof config !== "object") {
+        console.error("MonkeyScript: Could not create a new project: The provided configuration must be a JSON file path or an object.");
         process.exit();
+    }
+	
+    // check if "package.json" was passed to make sure raw "package.json" can be used
+    if (input === "package.json") {
+        if (!("monkeyscript" in config)) {
+            config.monkeyscript = {meta:{}};
+        }
     }
 
     var compiler = new Compiler(config);
@@ -36,7 +44,7 @@ MonkeyScript.createProject = function(input) {
                 return cb(null, file);
             }
             file.contents = Buffer.concat([prependedBuffer, file.contents],
-            prependedBuffer.length + file.contents.length);
+                prependedBuffer.length + file.contents.length);
             cb(null, file);
         };
 		
@@ -70,10 +78,16 @@ function throwIfInvalid(input) {
 
 function getConfiguration(input) {
     if (typeof input === "string") {
-        var configText = fs.readFileSync(input).toString();
-        return JSON.parse(configText);
+        try {
+            var configText = fs.readFileSync(input).toString();
+            return JSON.parse(configText);
+        } catch (error) {
+            console.error("MonkeyScript: Could not parse JSON file.", error.message);
+            return false;
+        }
     } else if (typeof input === "object") {
-        return input;
+        // clone
+        return JSON.parse(JSON.stringify(input));
     }
 }
 
