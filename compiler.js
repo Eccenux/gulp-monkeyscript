@@ -33,14 +33,18 @@ class Compiler {
 
     /**
      * Prepare multi-line string for inclusion in JavaScript.
+     * 
+     * Note! New line characters are added because slash (\) at the end of template string would brake template syntax.
+     * Starting new line is added for code beauty ;-).
+     * 
      * @param {String} text Some string.
      */
     prepareTemplateString(text) {
         if (text.search(/[`$]/)>=0) {
             text = text.replace(/([`$])/g, '\\$1');
-            return "String.raw`"+text+"`.replace(/\\\\([`$])/g, '\\$1')";
+            return "String.raw`\n"+text+"\n`.replace(/\\\\([`$])/g, '\\$1')";
         }
-        return "String.raw`"+text+"`";
+        return "String.raw`\n"+text+"\n`";
     }
 
     /**
