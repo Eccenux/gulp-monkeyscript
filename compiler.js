@@ -25,10 +25,22 @@ class Compiler {
         }
         if (this.options.prependCSS) {
             let css = this.getFileContents(this.options.prependCSS);
-            userScript += "\nvar _css = String.raw`"+css+"`;\n";
+            userScript += "\nvar _css = "+this.prepareTemplateString(css)+";\n";
         }
         
         return userScript += "\n";
+    }
+
+    /**
+     * Prepare multi-line string for inclusion in JavaScript.
+     * @param {String} text Some string.
+     */
+    prepareTemplateString(text) {
+        if (text.search(/[`$]/)>=0) {
+            text = text.replace(/([`$])/g, '\\$1');
+            return "String.raw`"+text+"`.replace(/\\\\([`$])/g, '\\$1')";
+        }
+        return "String.raw`"+text+"`";
     }
 
     /**

@@ -175,6 +175,34 @@ describe('Compiler', function () {
         });
     });
 
+    // prepareTemplateString function
+    describe('prepareTemplateString', function () {
+        let compiler = new Compiler({});
+        it('Should use String.raw', function () {
+            let css = compiler.getFileContents("test/test.css");
+            let result = compiler.prepareTemplateString(css);
+            assert.isTrue(result.indexOf("#just-for-tests")>=0, `result must contain #just-for-tests selector from CSS\n\n` + result);
+            assert.isTrue(result.search(/^String\.raw`[\s\S]+?`$/)==0, `result must contain String.raw\n\n` + result);
+        });
+        it('Should escape CSS', function () {
+            let css = compiler.getFileContents("test/test-escape.css");
+            let result = compiler.prepareTemplateString(css);
+            assert.isTrue(result.indexOf("\\`special\\`")>=0, `result must contain escaped backticks\n\n` + result);
+            assert.isTrue(result.indexOf("\\${variable}")>=0, `result must contain escaped dolar\n\n` + result);
+            //assert.isTrue(false, `todo\n` + result);
+        });
+        it('Should only add replace when needed', function () {
+            let css, result;
+            css = compiler.getFileContents("test/test.css");
+            result = compiler.prepareTemplateString(css);
+            assert.isTrue(result.indexOf(".replace")<0, `result must not contain replace function for simple CSS\n\n` + result);
+
+            css = compiler.getFileContents("test/test-escape.css");
+            result = compiler.prepareTemplateString(css);
+            assert.isTrue(result.indexOf(".replace")>0, `result must contain replace function for escaped String.raw\n\n` + result);
+        });
+    });
+
 });
 
 function regExpEscape(literal_string) {
