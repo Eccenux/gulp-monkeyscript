@@ -156,7 +156,7 @@ describe('Compiler', function () {
                     assert.isTrue(result.search(new RegExp("@" + regExpEscape(key) + "\\s+" + regExpEscape(value)))>=0, `result must contain @${key} ${value}\n\n` + result);
                 });
             }
-            assert.isTrue(false, `todo\n` + result);
+            //assert.isTrue(false, `todo\n` + result);
         });
     });
 
