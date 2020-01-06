@@ -163,7 +163,7 @@ describe('Compiler', function () {
                 "author": "Johnny be Good",
                 "version": "1.2.3",
                 "monkeyscript": {
-                    "prependCSS": "test.css",
+                    "prependCSS": "test/test.css",
                     "meta": {}
                 }
             };
@@ -171,7 +171,7 @@ describe('Compiler', function () {
             let result = "";
             result = compiler.compile();
             assert.isTrue(result.indexOf("#just-for-tests")>=0, `result must contain #just-for-tests selector from CSS\n\n` + result);
-            assert.isTrue(false, `todo\n` + result);
+            //assert.isTrue(false, `todo\n` + result);
         });
     });
 

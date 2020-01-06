@@ -1,4 +1,5 @@
 "use-strict";
+const fs = require('fs');
 
 class Compiler {
     constructor(rawConfig, basePad) {
@@ -15,17 +16,34 @@ class Compiler {
      * Creates whole header for a user.script.js.
      */
     compile () {
-        var userScript = "// ==UserScript==\n";
+        let userScript = "// ==UserScript==\n";
         userScript += this.generateMeta();
         userScript += "// ==/UserScript==\n";
 
-        if (this.config.useStrict || this.rawConfig.useStrict) {
+        if (this.config.useStrict || this.options.useStrict) {
             userScript += "'use strict';\n";
+        }
+        if (this.options.prependCSS) {
+            let css = this.getFileContents(this.options.prependCSS);
+            userScript += "\nvar _css = String.raw`"+css+"`;\n";
         }
         
         return userScript += "\n";
     }
 
+    /**
+     * Get raw file contents.
+     * @param {String} input File path.
+     */
+    getFileContents(input) {
+        try {
+            return fs.readFileSync(input).toString();
+        } catch (error) {
+            console.error("MonkeyScript: Could not load file. ", error.message);
+            return false;
+        }
+    }
+    
     /**
      * Get type of configuration.
      * @param {Object} rawConfig Object.
@@ -50,6 +68,7 @@ class Compiler {
         // only meta, so not much to do
         if (type === "simple") {
             this.config = rawConfigClone;
+            this.options = {};
             return rawConfigClone;
         }
 
@@ -71,6 +90,7 @@ class Compiler {
             }
         });
         this.config = config;
+        this.options = rawConfigClone.monkeyscript;
         return config;
     }
     
@@ -82,7 +102,7 @@ class Compiler {
 	 * @private
      */
     getKeysLength(object, base) {
-        var length = base ? base : 0;
+        let length = base ? base : 0;
         Object.keys(object).forEach((value)=>{
             if (value.length > length) {
                 length = value.length;
@@ -125,11 +145,11 @@ class Compiler {
 	 * @private
      */
     generateMeta () {
-        var me = this;
-        var config = this.config;
-        var userScript = "";
+        const me = this;
+        const config = this.config;
+        let userScript = "";
 
-        var options = [
+        let options = [
             'author',
             'name',
             'id',
@@ -229,8 +249,8 @@ class Compiler {
                     process.exit();
                 }
 
-                var key = Object.keys(resourceItem)[0];
-                var value = resourceItem[key];
+                let key = Object.keys(resourceItem)[0];
+                let value = resourceItem[key];
                 
                 userScript += me.getMetaLine("resource", key + " " + value);
             });
