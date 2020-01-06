@@ -25,7 +25,7 @@ class Compiler {
         }
         if (this.options.prependCSS) {
             let css = this.getFileContents(this.options.prependCSS);
-            userScript += "\nvar _css = "+this.prepareTemplateString(css)+";\n";
+            userScript += "\nvar _css = /*css*/ "+this.prepareTemplateString(css, true)+";\n";
         }
         
         return userScript += "\n";
@@ -34,17 +34,24 @@ class Compiler {
     /**
      * Prepare multi-line string for inclusion in JavaScript.
      * 
-     * Note! New line characters are added because slash (\) at the end of template string would brake template syntax.
-     * Starting new line is added for code beauty ;-).
+     * Note! Do not try to use `String.raw`.
+     * <li>It is actually slower then pure template string.
+     * <li>You cannot use css highlighting hints with it.
+     * See: https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css
+     * <li>And you actually have to do more workarounds to support special characters in the string
+     * (you cannot use backtick directly because there is no way to escape it).
      * 
      * @param {String} text Some string.
+     * @param {Boolean} addNewLine Adds new line characters around text.
      */
-    prepareTemplateString(text) {
-        if (text.search(/[`$]/)>=0) {
-            text = text.replace(/([`$])/g, '\\$1');
-            return "String.raw`\n"+text+"\n`.replace(/\\\\([`$])/g, '\\$1')";
+    prepareTemplateString(text, addNewLine) {
+        if (text.search(/[`$\\]/)>=0) {
+            text = text.replace(/([\\$`])/g, '\\$1');
         }
-        return "String.raw`\n"+text+"\n`";
+        if (addNewLine) {
+            return "`\n"+text+"\n`";
+        }
+        return "`"+text+"`";
     }
 
     /**
